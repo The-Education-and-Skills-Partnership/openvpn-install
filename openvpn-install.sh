@@ -103,8 +103,8 @@ function installUnbound() {
 			apt-get install -y unbound
 
 			# Configuration
-			echo 'interface: 10.100.01
-access-control: 10.100.01/22 allow
+			echo 'interface: 10.100.0.1
+access-control: 10.100.0.1/22 allow
 hide-identity: yes
 hide-version: yes
 use-caps-for-id: yes
@@ -114,8 +114,8 @@ prefetch: yes' >>/etc/unbound/unbound.conf
 			yum install -y unbound
 
 			# Configuration
-			sed -i 's|# interface: 0.0.0.0$|interface: 10.100.01|' /etc/unbound/unbound.conf
-			sed -i 's|# access-control: 127.0.0.0/8 allow|access-control: 10.100.01/22 allow|' /etc/unbound/unbound.conf
+			sed -i 's|# interface: 0.0.0.0$|interface: 10.100.0.1|' /etc/unbound/unbound.conf
+			sed -i 's|# access-control: 127.0.0.0/8 allow|access-control: 10.100.0.1/22 allow|' /etc/unbound/unbound.conf
 			sed -i 's|# hide-identity: no|hide-identity: yes|' /etc/unbound/unbound.conf
 			sed -i 's|# hide-version: no|hide-version: yes|' /etc/unbound/unbound.conf
 			sed -i 's|use-caps-for-id: no|use-caps-for-id: yes|' /etc/unbound/unbound.conf
@@ -124,8 +124,8 @@ prefetch: yes' >>/etc/unbound/unbound.conf
 			dnf install -y unbound
 
 			# Configuration
-			sed -i 's|# interface: 0.0.0.0$|interface: 10.100.01|' /etc/unbound/unbound.conf
-			sed -i 's|# access-control: 127.0.0.0/8 allow|access-control: 10.100.01/22 allow|' /etc/unbound/unbound.conf
+			sed -i 's|# interface: 0.0.0.0$|interface: 10.100.0.1|' /etc/unbound/unbound.conf
+			sed -i 's|# access-control: 127.0.0.0/8 allow|access-control: 10.100.0.1/22 allow|' /etc/unbound/unbound.conf
 			sed -i 's|# hide-identity: no|hide-identity: yes|' /etc/unbound/unbound.conf
 			sed -i 's|# hide-version: no|hide-version: yes|' /etc/unbound/unbound.conf
 			sed -i 's|# use-caps-for-id: no|use-caps-for-id: yes|' /etc/unbound/unbound.conf
@@ -147,8 +147,8 @@ prefetch: yes' >>/etc/unbound/unbound.conf
 	directory: "/etc/unbound"
 	trust-anchor-file: trusted-key.key
 	root-hints: root.hints
-	interface: 10.100.01
-	access-control: 10.100.01/22 allow
+	interface: 10.100.0.1
+	access-control: 10.100.0.1/22 allow
 	port: 53
 	num-threads: 2
 	use-caps-for-id: yes
@@ -182,8 +182,8 @@ private-address: ::ffff:0:0/96" >>/etc/unbound/unbound.conf
 
 		# Add Unbound 'server' for the OpenVPN subnet
 		echo 'server:
-interface: 10.100.01
-access-control: 10.100.01/22 allow
+interface: 10.100.0.1
+access-control: 10.100.0.1/22 allow
 hide-identity: yes
 hide-version: yes
 use-caps-for-id: yes
@@ -767,7 +767,7 @@ persist-key
 persist-tun
 keepalive 10 120
 topology subnet
-server 10.100.00 255.2555.252.0
+server 10.100.0.0 255.255.252.0
 ifconfig-pool-persist ipp.txt" >>/etc/openvpn/server.conf
 
 	# DNS resolvers
@@ -789,7 +789,7 @@ ifconfig-pool-persist ipp.txt" >>/etc/openvpn/server.conf
 		done
 		;;
 	2) # Self-hosted DNS resolver (Unbound)
-		echo 'push "dhcp-option DNS 10.100.01"' >>/etc/openvpn/server.conf
+		echo 'push "dhcp-option DNS 10.100.0.1"' >>/etc/openvpn/server.conf
 		if [[ $IPV6_SUPPORT == 'y' ]]; then
 			echo 'push "dhcp-option DNS fd42:42:42:42::1"' >>/etc/openvpn/server.conf
 		fi
@@ -953,7 +953,7 @@ verb 3" >>/etc/openvpn/server.conf
 
 	# Script to add rules
 	echo "#!/bin/sh
-iptables -t nat -I POSTROUTING 1 -s 10.100.00/22 -o $NIC -j MASQUERADE
+iptables -t nat -I POSTROUTING 1 -s 10.100.0.0/22 -o $NIC -j MASQUERADE
 iptables -I INPUT 1 -i tun0 -j ACCEPT
 iptables -I FORWARD 1 -i $NIC -o tun0 -j ACCEPT
 iptables -I FORWARD 1 -i tun0 -o $NIC -j ACCEPT
@@ -969,7 +969,7 @@ ip6tables -I INPUT 1 -i $NIC -p $PROTOCOL --dport $PORT -j ACCEPT" >>/etc/iptabl
 
 	# Script to remove rules
 	echo "#!/bin/sh
-iptables -t nat -D POSTROUTING -s 10.100.00/22 -o $NIC -j MASQUERADE
+iptables -t nat -D POSTROUTING -s 10.100.0.0/22 -o $NIC -j MASQUERADE
 iptables -D INPUT -i tun0 -j ACCEPT
 iptables -D FORWARD -i $NIC -o tun0 -j ACCEPT
 iptables -D FORWARD -i tun0 -o $NIC -j ACCEPT
