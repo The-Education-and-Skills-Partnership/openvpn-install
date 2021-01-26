@@ -1085,13 +1085,15 @@ function newClient() {
 	fi
 
 	# Home directory of the user, where the client configuration (.ovpn) will be written
-	if [ -e "/home/$CLIENT" ]; then # if $1 is a user name
-		homeDir="/home/$CLIENT"
-	elif [ "${SUDO_USER}" ]; then # if not, use SUDO_USER
-		homeDir="/home/${SUDO_USER}"
-	else # if not SUDO_USER, use /root
-		homeDir="/root"
-	fi
+	#if [ -e "/home/$CLIENT" ]; then # if $1 is a user name
+	#	homeDir="/home/$CLIENT"
+	#elif [ "${SUDO_USER}" ]; then # if not, use SUDO_USER
+	#	homeDir="/home/${SUDO_USER}"
+	#else # if not SUDO_USER, use /root
+	#	homeDir="/root"
+	#fi
+	mkdir -p /ovpn/clients
+	homeDir="/ovpn/clients"
 
 	# Determine if we use tls-auth or tls-crypt
 	if grep -qs "^tls-crypt" /etc/openvpn/server.conf; then
